@@ -24,7 +24,6 @@ const getShort =async(req,res)=>{
         const {shortId} = req.params
         const url = await Url.findOne({shortId})
         if(!url) return res.status(400).send('Not Found')
-            url.clicks++
         await url.save()
         res.redirect(url.originalUrl)
     } catch (err) {
