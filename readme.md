@@ -16,9 +16,11 @@ Server will run on:
 http://localhost:5000
 
 4. make .env file on root and include following secrets
- MONGO_URI = <Your Mongodb atlas URI along with password>
- PORT = <PORT you want to run server on>
- URL = <URL of the backend you are runnnning this> for now its going to be like http://localhost:<PORT>
+
+ MONGO_URI = Your Mongodb atlas URI along with password
+
+ PORT = PORT you want to run server on
+ 
+ URL = URL of the backend you are runnnning this for now its going to be like http://localhost
 
  6. test the apis using postman 
- 
