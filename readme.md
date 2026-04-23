@@ -1,26 +1,102 @@
-A simple and modern URL shortener Backend that convert long URLs into short, shareable links.
+# URL Shortener Backend
 
-Installation setup 
-1.  Clone the repository
-$ git clone https://github.com/kphuyal79-del/url-shortener-backend.git
-$ cd url-shortener-backend
+A simple backend service that converts long URLs into short, shareable links. Designed to be lightweight and easy to integrate with any frontend or client.
 
-2. Install packages
+---
+
+## Features
+
+- Convert long URLs into short links  
+- RESTful API structure  
+- Scalable and simple architecture  
+- Environment-based configuration  
+
+---
+
+## Tech Stack
+
+- Node.js  
+- Express.js  
+- MongoDB (Atlas)  
+
+---
+
+## Getting Started
+
+### Clone the Repository
+
+```bash
+git clone https://github.com/kphuyal79-del/url-shortener-backend.git
+cd url-shortener-backend
+```
+
+### Install Dependencies
+
+```bash
 npm install
+```
 
-3. Run the server 
+### Environment Variables
+
+Create a `.env` file in the root directory and add the following:
+
+```env
+MONGO_URI=your_mongodb_atlas_uri
+PORT=5000
+URL=http://localhost:5000
+```
+
+- `MONGO_URI`: MongoDB connection string  
+- `PORT`: Port where the server will run  
+- `URL`: Base URL of the backend  
+
+---
+
+## Running the Server
+
+```bash
 node server.js
+```
 
-Server will run on:
+The server will run at:
 
+```
 http://localhost:5000
+```
 
-4. make .env file on root and include following secrets
+---
 
- MONGO_URI = Your Mongodb atlas URI along with password
+## API Testing
 
- PORT = PORT you want to run server on
+You can test the API using Postman or any HTTP client.
 
- URL = URL of the backend you are runnnning this for now its going to be like http://localhost:PORT
+---
 
- 6. test the apis using postman 
+## Basic Workflow
+
+1. Send a POST request with a long URL  
+2. The server generates a short URL  
+3. Accessing the short URL redirects to the original link  
+
+---
+
+## Project Structure
+
+```
+url-shortener-backend/
+│── models/
+│── routes/
+│── controllers/
+│── config/
+│── server.js
+│── .env
+```
+
+---
+
+## Future Improvements
+
+- User authentication  
+- Click tracking and analytics  
+- Custom short URLs  
+- Rate limiting and security improvements  
