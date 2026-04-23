@@ -75,6 +75,7 @@ You can test the API using Postman or any HTTP client.
 ## Basic Workflow
 
 1. Send a POST request with a long URL  
+  - request body {"originalUrl":"Your long URL"}
 2. The server generates a short URL  
 3. Accessing the short URL redirects to the original link  
 
