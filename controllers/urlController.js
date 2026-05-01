@@ -1,6 +1,6 @@
 const Url = require('../model/Url')
 const {nanoid} = require('nanoid')
-const forward = process.env.URL
+const forward = process.env.BASE_URL
 const setShort = async(req,res)=>{
     try {
             const {originalUrl} = req.body
@@ -9,7 +9,8 @@ const setShort = async(req,res)=>{
 
     const newUrl = new Url({
         originalUrl,
-        shortId
+        shortId,
+        user:req.user.id
     })
     await newUrl.save()
     res.json({
@@ -30,5 +31,12 @@ const getShort =async(req,res)=>{
         res.status(500).json({error:err.message})
     }
 }
-
-module.exports = {setShort,getShort}
+const getMyUrls = async(req,res)=>{
+    try {
+        const urls = await Url.find({user:req.user.id})
+        res.json(urls)
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+}
+module.exports = {setShort,getShort,getMyUrls}

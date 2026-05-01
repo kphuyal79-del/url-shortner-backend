@@ -1,103 +1,207 @@
-# URL Shortener Backend
+#  URL Shortener Backend with Authentication
 
-A simple backend service that converts long URLs into short, shareable links. Designed to be lightweight and easy to integrate with any frontend or client.
+A production-ready backend built with **Node.js, Express, MongoDB**
+featuring authentication and URL shortening.
 
----
 
-## Features
 
-- Convert long URLs into short links  
-- RESTful API structure  
-- Scalable and simple architecture  
-- Environment-based configuration  
+##  Features
 
----
+-    User Authentication (Register, Login, Logout)
+-    Email Verification (Nodemailer)
+-    JWT Authentication (Access + Refresh Tokens)
+-    Refresh Token System
+-    URL Shortener
+-    Get User-specific URLs
+-    Protected Routes with Middleware
 
-## Tech Stack
 
-- Node.js  
-- Express.js  
-- MongoDB (Atlas)  
+##  Project Structure
 
----
+    url-shortener-backend/
+    ├── config/db.js
+    ├── controllers/
+    │   ├── auth.controller.js
+    │   └── urlController.js
+    ├── middleware/auth.middleware.js
+    ├── model/
+    │   ├── User.js
+    │   └── Url.js
+    ├── routes/
+    │   ├── user.js
+    │   └── url.js
+    ├── utils/sendEmail.js
+    ├── .env
+    ├── server.js
+    └── package.json
 
-## Getting Started
 
-### Clone the Repository
+##  Environment Variables
 
-```bash
-git clone https://github.com/kphuyal79-del/url-shortener-backend.git
-cd url-shortener-backend
-```
+Create a `.env` file:
 
-### Install Dependencies
+    PORT=5000
+    MONGO_URI=your_mongodb_uri
 
-```bash
-npm install
-```
+    JWT_SECRET=your_access_secret
+    JWT_REFRESH_SECRET=your_refresh_secret
 
-### Environment Variables
+    EMAIL_USER=your_email@gmail.com
+    EMAIL_PASS=your_gmail_app_password
 
-Create a `.env` file in the root directory and add the following:
+    BASE_URL=http://localhost:5000
 
-```env
-MONGO_URI=your_mongodb_atlas_uri
-PORT=5000
-URL=http://localhost:5000
-```
 
-- `MONGO_URI`: MongoDB connection string  
-- `PORT`: Port where the server will run  
-- `URL`: Base URL of the backend  
 
----
+##  Installation
+    git clone https://github.com/kphuyal79-del/url-shortner-backend
+    cd url-shortner-backend
+    npm install
+    npm start
 
-## Running the Server
+Server runs on:
 
-```bash
-node server.js
-```
+    http://localhost:5000
 
-The server will run at:
 
-```
-http://localhost:5000
-```
+##  Authentication Routes
 
----
+### Register
 
-## API Testing
+    POST /api/users/register
+    JSON
+    {
+      "name":"example name",
+      "email":"example@gmail.com",
+      "passowrd":"1232321"
+    }
 
-You can test the API using Postman or any HTTP client.
+### Verify Email
 
----
+    GET /api/users/verify/:token
 
-## Basic Workflow
+### Login
 
-1. Send a POST request with a long URL  
-  - request body {"originalUrl":"Your long URL"}
-2. The server generates a short URL  
-3. Accessing the short URL redirects to the original link  
+    POST /api/users/login
 
----
+     JSON
+    {
+      "email":"example@gmail.com",
+      "passowrd":"1232321"
+    }
 
-## Project Structure
+Response:
 
-```
-url-shortener-backend/
-│── models/
-│── routes/
-│── controllers/
-│── config/
-│── server.js
-│── .env
-```
+    {
+      "accessToken": "...",
+      "refreshToken": "..."
+    }
 
----
 
-## Future Improvements
+### Refresh Token
 
-- User authentication  
-- Click tracking and analytics  
-- Custom short URLs  
-- Rate limiting and security improvements  
+    POST /api/users/refresh-token
+
+Body:
+
+    {
+      "refreshToken": "your_refresh_token"
+    }
+
+
+
+### Logout
+
+    POST /api/users/logout
+
+Header:
+
+    Authorization: Bearer ACCESS_TOKEN
+
+
+
+### Profile
+
+    GET /api/users/profile
+
+
+
+##  URL Routes
+
+### Create Short URL
+
+    POST /shortern
+
+Header:
+
+    Authorization: Bearer ACCESS_TOKEN
+
+Body:
+
+    {
+      "url": "https://example.com"
+    }
+
+
+
+### Get My URLs
+
+    GET /my-urls
+
+
+
+### Redirect
+
+    GET /:shortId
+
+
+
+##  Auth Flow
+
+1.  Register user
+2.  Verify email
+3.  Login → receive tokens
+4.  Access protected routes using access token
+5.  Refresh token when expired
+6.  Logout clears refresh token
+
+
+
+##  Security
+
+-   Password hashed using bcrypt
+-   Email verification required
+-   JWT authentication
+-   Refresh token stored in DB
+-   Protected routes via middleware
+
+
+## 🧪 Testing
+
+Use: - Postman - Thunder Client
+
+
+
+##  Tech Stack
+
+-   Node.js
+-   Express.js
+-   MongoDB (Mongoose)
+-   JWT
+-   Nodemailer
+-   bcryptjs
+
+
+
+##  Author
+
+Krishna Phuyal\
+GitHub: https://github.com/kphuyal79-del
+
+
+##  Future Improvements
+
+-   Rate limiting
+-   Analytics (click tracking)
+-   Custom short URLs
+-   Frontend integration

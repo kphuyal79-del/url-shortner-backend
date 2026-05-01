@@ -60,7 +60,7 @@ const verifyEmailController = async (req, res) => {
     }
 
     user.isVerified = true;
-    user.verificationToken = undefined;
+    user.verificationToken = null;
 
     await user.save();
 
@@ -71,7 +71,10 @@ const verifyEmailController = async (req, res) => {
 };
 const loginUserController = async (req, res) => {
   const { email, password } = req.body;
-
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return res.status(400).json({ message: "Invalid email format" });
+  }
   try {
     if (!email || !password) {
       return res.status(400).json({ message: "Please fill all fields" });
@@ -97,20 +100,68 @@ const loginUserController = async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    const token = jwt.sign(
+    const accessToken = jwt.sign(
       {
         id: user._id,
         email: user.email,
       },
       process.env.JWT_SECRET,
-      { expiresIn: "1d" }
+      { expiresIn: "15m" },
     );
-
+    const refreshToken = jwt.sign(
+      {
+        id: user._id,
+        email: user.email,
+      },
+      process.env.JWT_REFRESH_SECRET,
+      { expiresIn: "7d" },
+    );
+    user.refreshToken = refreshToken;
+    await user.save();
     return res.status(200).json({
       message: "Login successful",
-      token,
+      accessToken,
+      refreshToken,
     });
-
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+const refreshTokenController = async (req, res) => {
+  const { refreshToken } = req.body;
+  if (!refreshToken) {
+    return res.status(400).json({ message: "Refresh token is required" });
+  }
+  try {
+    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+    const user = await User.findById(decoded.id);
+    if (!user || user.refreshToken !== refreshToken) {
+      return res.status(401).json({ message: "Invalid refresh token" });
+    }
+    const newAccessToken = jwt.sign(
+      {
+        id: user._id,
+        email: user.email,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "15min" },
+    );
+    return res.status(200).json({
+      accessToken: newAccessToken,
+    });
+  } catch (error) {
+    return res.status(401).json({ message: "Invalid refresh token" });
+  }
+};
+const logoutController = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    user.refreshToken = null;
+    await user.save();
+    res.status(200).json({ message: "Logged out successfully" });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -119,4 +170,6 @@ module.exports = {
   registerUserController,
   verifyEmailController,
   loginUserController,
+  refreshTokenController,
+  logoutController,
 };
